@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
 
   outputs = {
     self,
@@ -20,6 +20,7 @@
 
     packages.x86_64-linux = let
       pkgs = nixpkgs-stable.legacyPackages.x86_64-linux;
+      selfPkgs = self.packages.x86_64-linux;
     in {
       git-tk = pkgs.buildEnv {
         name = "git-tk";
@@ -31,7 +32,7 @@
         '';
       };
 
-      default = self.packages.x86_64-linux.git-tk;
+      default = selfPkgs.git-tk;
     };
   };
 }
