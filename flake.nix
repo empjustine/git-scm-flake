@@ -4,35 +4,33 @@
   outputs = {
     self,
     nixpkgs-stable,
-  }: {
-    apps.x86_64-linux = let
-      pkgs = nixpkgs-stable.legacyPackages.x86_64-linux;
-    in {
+  }: let
+    system = "x86_64-linux";
+  in {
+    apps.${system} = {
       git-gui = {
         type = "app";
-        program = "${pkgs.gitFull}/libexec/git-core/git-gui";
+        program = "${nixpkgs-stable.legacyPackages.${system}.gitFull}/libexec/git-core/git-gui";
       };
+
       gitk = {
         type = "app";
-        program = "${pkgs.gitFull}/bin/gitk";
+        program = "${nixpkgs-stable.legacyPackages.${system}.gitFull}/bin/gitk";
       };
     };
 
-    packages.x86_64-linux = let
-      pkgs = nixpkgs-stable.legacyPackages.x86_64-linux;
-      selfPkgs = self.packages.x86_64-linux;
-    in {
-      git-tk = pkgs.buildEnv {
+    packages.${system} = {
+      git-tk = nixpkgs-stable.legacyPackages.${system}.buildEnv {
         name = "git-tk";
         paths = [];
         postBuild = ''
           mkdir -p $out/bin
-          ln -s ${pkgs.gitFull}/libexec/git-core/git-gui $out/bin/git-gui
-          ln -s ${pkgs.gitFull}/bin/gitk $out/bin/gitk
+          ln -s ${nixpkgs-stable.legacyPackages.${system}.gitFull}/libexec/git-core/git-gui $out/bin/git-gui
+          ln -s ${nixpkgs-stable.legacyPackages.${system}.gitFull}/bin/gitk $out/bin/gitk
         '';
       };
 
-      default = selfPkgs.git-tk;
+      default = self.packages.${system}.git-tk;
     };
   };
 }
